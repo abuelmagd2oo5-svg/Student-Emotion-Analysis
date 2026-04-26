@@ -1,0 +1,25 @@
+getwd()
+
+data = read.csv("emotions.csv")
+head(data)
+
+install.packages("ggplot2")
+install.packages("dplyr")
+
+library(ggplot2)
+library(dplyr)
+
+
+data$Score = ifelse(data$Emotion == "happy", 1,
+                     ifelse(data$Emotion == "neutral", 0.5,
+                            ifelse(data$Emotion == "sad", 0.2,
+                                   ifelse(data$Emotion == "angry", 0.1, 0.3))))
+
+
+data %>%
+  group_by(Lecture_ID) %>%
+  summarise(Engagement = mean(Score))
+
+ggplot(data, aes(x = Lecture_ID, y = Score)) +
+  stat_summary(fun = mean, geom = "bar", fill = "green") +
+  ggtitle("Engagement Score per Lecture")
